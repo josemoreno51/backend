@@ -1,0 +1,75 @@
+@"
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">💰 Gestión de Ventas</h2>
+        <a href="{% url 'venta_create' %}" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+            ＋ Nueva Venta
+        </a>
+    </div>
+
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if ventas %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">ID</th>
+                    <th class="py-3 px-6 text-left">Cliente</th>
+                    <th class="py-3 px-6 text-left">Fecha</th>
+                    <th class="py-3 px-6 text-left">Total</th>
+                    <th class="py-3 px-6 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+                {% for venta in ventas %}
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left">
+                        <div class="font-medium text-gray-800">#{{ venta.id }}</div>
+                    </td>
+                    <td class="py-3 px-6 text-left">
+                        {{ venta.cliente.nombre }}
+                    </td>
+                    <td class="py-3 px-6 text-left">
+                        {{ venta.fecha_venta|date:"d/m/Y H:i" }}
+                    </td>
+                    <td class="py-3 px-6 text-left">
+                        <span class="font-bold text-green-600">${{ venta.total }}</span>
+                    </td>
+                    <td class="py-3 px-6 text-center">
+                        <div class="flex item-center justify-center space-x-2">
+                            <a href="{% url 'venta_detail' venta.id %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs">
+                                Ver
+                            </a>
+                            <a href="{% url 'venta_delete' venta.id %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">
+                                Eliminar
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-8">
+        <p class="text-gray-500 text-lg">No hay ventas registradas.</p>
+        <a href="{% url 'venta_create' %}" class="inline-block mt-4 bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+            Registrar primera venta
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+"@ | Out-File -FilePath "ventas\templates\ventas\ventas_list.html" -Encoding UTF8

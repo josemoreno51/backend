@@ -1,0 +1,29 @@
+@"
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+    <h2 class="text-2xl font-bold text-red-600 mb-4">⚠️ Eliminar Venta</h2>
+    
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <p class="font-bold">¿Estás seguro de que quieres eliminar esta venta?</p>
+        <p class="mt-2"><strong>Venta #:</strong> {{ venta.id }}</p>
+        <p><strong>Cliente:</strong> {{ venta.cliente.nombre }}</p>
+        <p><strong>Total:</strong> ${{ venta.total }}</p>
+        <p><strong>Fecha:</strong> {{ venta.fecha_venta|date:"d/m/Y H:i" }}</p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="flex justify-end space-x-3">
+            <a href="{% url 'ventas_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                Cancelar
+            </a>
+            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                Sí, Eliminar
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+"@ | Out-File -FilePath "ventas\templates\ventas\venta_confirm_delete.html" -Encoding UTF8

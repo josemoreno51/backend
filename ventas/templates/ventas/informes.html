@@ -1,0 +1,161 @@
+@"
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">📊 Informes y Estadísticas</h2>
+
+    <!-- Productos Más Vendidos -->
+    <div class="mb-8">
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4">📦 Productos Más Vendidos</h3>
+        
+        {% if productos_mas_vendidos %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Tabla -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="text-lg font-semibold mb-3">Ranking de Productos</h4>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                <th class="py-2 px-3 text-left">Producto</th>
+                                <th class="py-2 px-3 text-left">Unidades Vendidas</th>
+                                <th class="py-2 px-3 text-left">Posición</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-600 text-sm">
+                            {% for producto in productos_mas_vendidos %}
+                            <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                <td class="py-2 px-3">
+                                    {{ producto.producto__nombre }}
+                                </td>
+                                <td class="py-2 px-3 font-semibold">
+                                    {{ producto.total_vendido }}
+                                </td>
+                                <td class="py-2 px-3">
+                                    <span class="{% if forloop.counter == 1 %}bg-yellow-400 text-yellow-800{% elif forloop.counter == 2 %}bg-gray-400 text-gray-800{% elif forloop.counter == 3 %}bg-orange-400 text-orange-800{% else %}bg-blue-400 text-blue-800{% endif %} px-2 py-1 rounded-full text-xs">
+                                        #{{ forloop.counter }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráfico Simulado -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="text-lg font-semibold mb-3">Gráfico de Ventas</h4>
+                <div class="bg-white p-4 rounded border">
+                    <div class="space-y-3">
+                        {% for producto in productos_mas_vendidos %}
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>{{ producto.producto__nombre|truncatechars:20 }}</span>
+                                <span class="font-semibold">{{ producto.total_vendido }} unidades</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div class="bg-blue-600 h-4 rounded-full" 
+                                     style="width: {% widthratio producto.total_vendido productos_mas_vendidos.0.total_vendido 100 %}%">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-8 bg-gray-50 rounded-lg">
+            <p class="text-gray-500 text-lg">No hay datos de ventas para mostrar.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Clientes con Más Ventas -->
+    <div class="mb-8">
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4">👑 Clientes con Más Ventas</h3>
+        
+        {% if clientes_con_mas_ventas %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Tabla -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="text-lg font-semibold mb-3">Ranking de Clientes</h4>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                <th class="py-2 px-3 text-left">Cliente</th>
+                                <th class="py-2 px-3 text-left">Total Gastado</th>
+                                <th class="py-2 px-3 text-left">N° de Ventas</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-600 text-sm">
+                            {% for cliente in clientes_con_mas_ventas %}
+                            <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                <td class="py-2 px-3">
+                                    {{ cliente.cliente__nombre }}
+                                </td>
+                                <td class="py-2 px-3 font-semibold text-green-600">
+                                    ${{ cliente.monto_total|default:0|floatformat:2 }}
+                                </td>
+                                <td class="py-2 px-3">
+                                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">
+                                        {{ cliente.total_ventas }} ventas
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráfico Simulado -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="text-lg font-semibold mb-3">Gráfico de Clientes</h4>
+                <div class="bg-white p-4 rounded border">
+                    <div class="space-y-3">
+                        {% for cliente in clientes_con_mas_ventas %}
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>{{ cliente.cliente__nombre|truncatechars:20 }}</span>
+                                <span class="font-semibold">${{ cliente.monto_total|default:0|floatformat:2 }}</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div class="bg-green-600 h-4 rounded-full" 
+                                     style="width: {% widthratio cliente.monto_total clientes_con_mas_ventas.0.monto_total 100 %}%">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-8 bg-gray-50 rounded-lg">
+            <p class="text-gray-500 text-lg">No hay datos de clientes para mostrar.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Estadísticas Generales -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+        <div class="bg-blue-50 p-4 rounded-lg text-center">
+            <div class="text-2xl font-bold text-blue-600">{{ productos_mas_vendidos.count }}</div>
+            <div class="text-sm text-blue-800">Productos con Ventas</div>
+        </div>
+        <div class="bg-green-50 p-4 rounded-lg text-center">
+            <div class="text-2xl font-bold text-green-600">{{ clientes_con_mas_ventas.count }}</div>
+            <div class="text-sm text-green-800">Clientes Activos</div>
+        </div>
+        <div class="bg-purple-50 p-4 rounded-lg text-center">
+            <div class="text-2xl font-bold text-purple-600">${{ clientes_con_mas_ventas.0.monto_total|default:0|floatformat:2 }}</div>
+            <div class="text-sm text-purple-800">Mayor Compra</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+"@ | Out-File -FilePath "ventas\templates\ventas\informes.html" -Encoding UTF8
