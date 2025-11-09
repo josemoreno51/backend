@@ -1,27 +1,25 @@
 from django.contrib import admin
-from .models import Cliente, Producto, Venta, DetalleVenta
+from .models import Cliente, Categoria, Producto, Evento, Venta, DetalleVenta, Flor, DiseñoRamo, DetalleRamo
 
-@admin.register(Cliente)
-class ClienteAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'email', 'telefono', 'fecha_registro']
-    search_fields = ['nombre', 'email']
+# ... (otros admin registrations)
 
-@admin.register(Producto)
-class ProductoAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'precio', 'stock', 'fecha_creacion']
-    list_filter = ['fecha_creacion']
+@admin.register(Flor)
+class FlorAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'color', 'precio_unidad', 'disponible']
+    list_filter = ['color', 'disponible']
     search_fields = ['nombre']
 
-class DetalleVentaInline(admin.TabularInline):
-    model = DetalleVenta
+class DetalleRamoInline(admin.TabularInline):
+    model = DetalleRamo
     extra = 1
 
-@admin.register(Venta)
-class VentaAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cliente', 'fecha_venta', 'total']
-    list_filter = ['fecha_venta']
-    inlines = [DetalleVentaInline]
+@admin.register(DiseñoRamo)
+class DiseñoRamoAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'cliente', 'estilo', 'precio_base', 'fecha_creacion']
+    list_filter = ['estilo', 'fecha_creacion']
+    inlines = [DetalleRamoInline]
+    search_fields = ['nombre', 'cliente__nombre']
 
-@admin.register(DetalleVenta)
-class DetalleVentaAdmin(admin.ModelAdmin):
-    list_display = ['venta', 'producto', 'cantidad', 'precio_unitario', 'subtotal']
+@admin.register(DetalleRamo)
+class DetalleRamoAdmin(admin.ModelAdmin):
+    list_display = ['diseño', 'flor', 'cantidad', 'subtotal']

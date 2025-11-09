@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sistema de Ventas - BackEnd{% endblock %}</title>
+    <title>{% block title %}🌸 Floristería Bellaflor - Sistema de Gestión{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 min-h-screen">
+</head><a href="{% url 'eventos_list' %}" class="hover:bg-green-700 px-3 py-2 rounded transition duration-200">Eventos</a>
+<body class="bg-pink-50 min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-blue-600 text-white shadow-lg">
+    <nav class="bg-green-600 text-white shadow-lg">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <h1 class="text-2xl font-bold">🏪 Sistema de Ventas</h1>
+                <h1 class="text-2xl font-bold">🌸 Floristería Bellaflor</h1>
                 <div class="space-x-4">
-                    <a href="{% url 'home' %}" class="hover:bg-blue-700 px-3 py-2 rounded transition duration-200">Inicio</a>
-                    <a href="{% url 'clientes_list' %}" class="hover:bg-blue-700 px-3 py-2 rounded transition duration-200">Clientes</a>
-                    <a href="{% url 'productos_list' %}" class="hover:bg-blue-700 px-3 py-2 rounded transition duration-200">Productos</a>
-                    <a href="{% url 'ventas_list' %}" class="hover:bg-blue-700 px-3 py-2 rounded transition duration-200">Ventas</a>
-                    <a href="{% url 'informes' %}" class="hover:bg-blue-700 px-3 py-2 rounded transition duration-200">Informes</a>
+                    <a href="{% url 'home' %}" class="hover:bg-green-700 px-3 py-2 rounded transition duration-200">Inicio</a>
+                    <a href="{% url 'clientes_list' %}" class="hover:bg-green-700 px-3 py-2 rounded transition duration-200">Clientes</a>
+                    <a href="{% url 'productos_list' %}" class="hover:bg-green-700 px-3 py-2 rounded transition duration-200">Productos</a>
+                    <a href="{% url 'eventos_list' %}" class="hover:bg-green-700 px-3 py-2 rounded transition duration-200">Eventos</a>
+                    <a href="{% url 'ventas_list' %}" class="hover:bg-green-700 px-3 py-2 rounded transition duration-200">Ventas</a>
+                    <a href="{% url 'informes' %}" class="hover:bg-green-700 px-3 py-2 rounded transition duration-200">Informes</a>
+                    <a href="{% url 'diseno_ramos_list' %}" class="hover:bg-green-700 px-3 py-2 rounded transition duration-200">Diseñar Ramos</a>
                 </div>
             </div>
         </div>
@@ -40,9 +42,9 @@
     </main>
     
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-4 mt-8">
+    <footer class="bg-green-800 text-white py-4 mt-8">
         <div class="container mx-auto text-center">
-            <p>&copy; 2025 Sistema de Ventas - Evaluación BackEnd</p>
+            <p>&copy; 2025 Floristería Bellaflor - Sistema de Gestión</p>
         </div>
     </footer>
 </body>
