@@ -1,0 +1,83 @@
+<!-- backend/templates/dashboard.html - CORREGIDO -->
+{% extends 'base.html' %}  <!-- ✅ Sin la carpeta backend/ -->
+
+{% block title %}Dashboard - Floristeria Bellaflor{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-green-700">Dashboard</h1>
+    <p class="text-gray-600">Bienvenido/a al sistema de gestión de Floristeria Bellaflor</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
+        <div class="flex items-center">
+            <div class="text-2xl mr-4">👥</div>
+            <div>
+                <div class="text-2xl font-bold text-green-600">{{ total_clientes }}</div>
+                <div class="text-gray-600">Clientes</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-pink-500">
+        <div class="flex items-center">
+            <div class="text-2xl mr-4">💐</div>
+            <div>
+                <div class="text-2xl font-bold text-pink-600">{{ total_productos }}</div>
+                <div class="text-gray-600">Productos</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
+        <div class="flex items-center">
+            <div class="text-2xl mr-4">💰</div>
+            <div>
+                <div class="text-2xl font-bold text-blue-600">{{ total_ventas }}</div>
+                <div class="text-gray-600">Ventas Totales</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
+        <div class="flex items-center">
+            <div class="text-2xl mr-4">🎉</div>
+            <div>
+                <div class="text-2xl font-bold text-purple-600">{{ total_eventos }}</div>
+                <div class="text-gray-600">Eventos</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-semibold mb-4 text-green-700">Acciones Rápidas</h2>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <a href="{% url 'ventas_list' %}" class="bg-green-100 text-green-700 p-4 rounded-lg text-center hover:bg-green-200 transition transform hover:scale-105">
+            <div class="text-2xl mb-2">💰</div>
+            <div class="font-medium">Ventas</div>
+        </a>
+        <a href="{% url 'clientes_list' %}" class="bg-blue-100 text-blue-700 p-4 rounded-lg text-center hover:bg-blue-200 transition transform hover:scale-105">
+            <div class="text-2xl mb-2">👥</div>
+            <div class="font-medium">Clientes</div>
+        </a>
+        <a href="{% url 'productos_list' %}" class="bg-pink-100 text-pink-700 p-4 rounded-lg text-center hover:bg-pink-200 transition transform hover:scale-105">
+            <div class="text-2xl mb-2">💐</div>
+            <div class="font-medium">Productos</div>
+        </a>
+        <a href="{% url 'eventos_list' %}" class="bg-purple-100 text-purple-700 p-4 rounded-lg text-center hover:bg-purple-200 transition transform hover:scale-105">
+            <div class="text-2xl mb-2">🎉</div>
+            <div class="font-medium">Eventos</div>
+        </a>
+        <a href="{% url 'diseno_ramos_list' %}" class="bg-yellow-100 text-yellow-700 p-4 rounded-lg text-center hover:bg-yellow-200 transition transform hover:scale-105">
+            <div class="text-2xl mb-2">🌹</div>
+            <div class="font-medium">Diseño Ramos</div>
+        </a>
+        <a href="{% url 'informes' %}" class="bg-red-100 text-red-700 p-4 rounded-lg text-center hover:bg-red-200 transition transform hover:scale-105">
+            <div class="text-2xl mb-2">📊</div>
+            <div class="font-medium">Informes</div>
+        </a>
+    </div>
+</div>
+{% endblock %}

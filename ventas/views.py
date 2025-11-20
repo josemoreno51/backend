@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import models
+from django.contrib.auth.decorators import login_required  # ✅ AGREGAR ESTA LÍNEA
 from .models import Cliente, Categoria, Producto, Evento, Venta, DetalleVenta, Flor, DiseñoRamo, DetalleRamo
 
+# ✅ AGREGAR @login_required A TODAS LAS FUNCIONES
+
+@login_required
 def home(request):
     # Estadísticas para el dashboard de floristería
     total_clientes = Cliente.objects.count()
@@ -29,6 +33,7 @@ def home(request):
     return render(request, 'ventas/home.html', context)
 
 # ========== CRUD CLIENTES ==========
+@login_required
 def clientes_list(request):
     tipo_filtro = request.GET.get('tipo', '')
     clientes = Cliente.objects.all().order_by('-fecha_registro')
@@ -41,6 +46,7 @@ def clientes_list(request):
         'tipo_filtro': tipo_filtro
     })
 
+@login_required
 def cliente_create(request):
     if request.method == 'POST':
         nombre = request.POST['nombre']
@@ -64,6 +70,7 @@ def cliente_create(request):
     
     return render(request, 'ventas/cliente_form.html')
 
+@login_required
 def cliente_edit(request, id):
     cliente = get_object_or_404(Cliente, id=id)
     
@@ -83,6 +90,7 @@ def cliente_edit(request, id):
     
     return render(request, 'ventas/cliente_form.html', {'cliente': cliente})
 
+@login_required
 def cliente_delete(request, id):
     cliente = get_object_or_404(Cliente, id=id)
     
@@ -97,10 +105,12 @@ def cliente_delete(request, id):
     return render(request, 'ventas/cliente_confirm_delete.html', {'cliente': cliente})
 
 # ========== CRUD CATEGORÍAS ==========
+@login_required
 def categorias_list(request):
     categorias = Categoria.objects.all()
     return render(request, 'ventas/categorias_list.html', {'categorias': categorias})
 
+@login_required
 def categoria_create(request):
     if request.method == 'POST':
         nombre = request.POST['nombre']
@@ -118,6 +128,7 @@ def categoria_create(request):
     
     return render(request, 'ventas/categoria_form.html')
 
+@login_required
 def categoria_edit(request, id):
     categoria = get_object_or_404(Categoria, id=id)
     
@@ -134,6 +145,7 @@ def categoria_edit(request, id):
     
     return render(request, 'ventas/categoria_form.html', {'categoria': categoria})
 
+@login_required
 def categoria_delete(request, id):
     categoria = get_object_or_404(Categoria, id=id)
     
@@ -148,6 +160,7 @@ def categoria_delete(request, id):
     return render(request, 'ventas/categoria_confirm_delete.html', {'categoria': categoria})
 
 # ========== CRUD PRODUCTOS ==========
+@login_required
 def productos_list(request):
     categoria_filtro = request.GET.get('categoria', '')
     tipo_filtro = request.GET.get('tipo', '')
@@ -168,6 +181,7 @@ def productos_list(request):
         'tipo_filtro': tipo_filtro
     })
 
+@login_required
 def producto_create(request):
     if request.method == 'POST':
         nombre = request.POST['nombre']
@@ -197,6 +211,7 @@ def producto_create(request):
     categorias = Categoria.objects.all()
     return render(request, 'ventas/producto_form.html', {'categorias': categorias})
 
+@login_required
 def producto_edit(request, id):
     producto = get_object_or_404(Producto, id=id)
     
@@ -222,6 +237,7 @@ def producto_edit(request, id):
         'categorias': categorias
     })
 
+@login_required
 def producto_delete(request, id):
     producto = get_object_or_404(Producto, id=id)
     
@@ -236,6 +252,7 @@ def producto_delete(request, id):
     return render(request, 'ventas/producto_confirm_delete.html', {'producto': producto})
 
 # ========== CRUD EVENTOS ==========
+@login_required
 def eventos_list(request):
     tipo_filtro = request.GET.get('tipo', '')
     
@@ -249,6 +266,7 @@ def eventos_list(request):
         'tipo_filtro': tipo_filtro
     })
 
+@login_required
 def evento_create(request):
     if request.method == 'POST':
         nombre = request.POST['nombre']
@@ -274,6 +292,7 @@ def evento_create(request):
     clientes = Cliente.objects.all()
     return render(request, 'ventas/evento_form.html', {'clientes': clientes})
 
+@login_required
 def evento_edit(request, id):
     evento = get_object_or_404(Evento, id=id)
     
@@ -297,6 +316,7 @@ def evento_edit(request, id):
         'clientes': clientes
     })
 
+@login_required
 def evento_delete(request, id):
     evento = get_object_or_404(Evento, id=id)
     
@@ -311,6 +331,7 @@ def evento_delete(request, id):
     return render(request, 'ventas/evento_confirm_delete.html', {'evento': evento})
 
 # ========== CRUD VENTAS ==========
+@login_required
 def ventas_list(request):
     estado_filtro = request.GET.get('estado', '')
     
@@ -324,6 +345,7 @@ def ventas_list(request):
         'estado_filtro': estado_filtro
     })
 
+@login_required
 def venta_create(request):
     if request.method == 'POST':
         cliente_id = request.POST['cliente']
@@ -386,6 +408,7 @@ def venta_create(request):
         'productos': productos
     })
 
+@login_required
 def venta_detail(request, id):
     venta = get_object_or_404(Venta, id=id)
     detalles = venta.detalleventa_set.all()
@@ -394,6 +417,7 @@ def venta_detail(request, id):
         'detalles': detalles
     })
 
+@login_required
 def venta_edit(request, id):
     venta = get_object_or_404(Venta, id=id)
     
@@ -420,6 +444,7 @@ def venta_edit(request, id):
         'eventos': eventos
     })
 
+@login_required
 def venta_delete(request, id):
     venta = get_object_or_404(Venta, id=id)
     
@@ -434,6 +459,7 @@ def venta_delete(request, id):
     return render(request, 'ventas/venta_confirm_delete.html', {'venta': venta})
 
 # ========== INFORMES FLORISTERÍA ==========
+@login_required
 def informes(request):
     # Productos más vendidos (flores más populares)
     productos_mas_vendidos = DetalleVenta.objects.values(
@@ -488,11 +514,14 @@ def informes(request):
         'eventos_data': eventos_data,
     }
     return render(request, 'ventas/informes.html', context)
+
 # ========== SISTEMA DE DISEÑO DE RAMOS ==========
+@login_required
 def diseno_ramos_list(request):
     diseños = DiseñoRamo.objects.all().order_by('-fecha_creacion')
     return render(request, 'ventas/diseno_ramos_list.html', {'diseños': diseños})
 
+@login_required
 def diseno_ramo_create(request):
     if request.method == 'POST':
         nombre = request.POST['nombre']
@@ -536,6 +565,7 @@ def diseno_ramo_create(request):
         'flores': flores
     })
 
+@login_required
 def diseno_ramo_detail(request, id):
     diseño = get_object_or_404(DiseñoRamo, id=id)
     detalles = diseño.detalles.all()
@@ -547,6 +577,7 @@ def diseno_ramo_detail(request, id):
         'total': total
     })
 
+@login_required
 def diseno_ramo_convertir_venta(request, id):
     diseño = get_object_or_404(DiseñoRamo, id=id)
     
@@ -576,6 +607,7 @@ def diseno_ramo_convertir_venta(request, id):
     
     return redirect('diseno_ramo_detail', id=id)
 
+@login_required
 def diseno_ramo_delete(request, id):
     diseño = get_object_or_404(DiseñoRamo, id=id)
     
