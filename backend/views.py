@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from ventas.models import Cliente, Producto, Venta, Evento
 from django.db import models
+from .forms import CustomUserCreationForm
 
 def custom_login(request):
     """Página de login - primera página que ven los usuarios"""
@@ -47,3 +48,19 @@ def custom_logout(request):
     logout(request)
     messages.info(request, 'Has cerrado sesión exitosamente')
     return redirect('login')
+from .forms import CustomUserCreationForm
+
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, '¡Registro exitoso!')
+            return redirect('home')  # Cambia 'home' por tu vista principal
+        else:
+            messages.error(request, 'Por favor corrige los errores below.')
+    else:
+        form = CustomUserCreationForm()
+    
+    return render(request, 'registration/register.html', {'form': form})
