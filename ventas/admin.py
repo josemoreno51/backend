@@ -22,4 +22,20 @@ class DiseñoRamoAdmin(admin.ModelAdmin):
 
 @admin.register(DetalleRamo)
 class DetalleRamoAdmin(admin.ModelAdmin):
-    list_display = ['diseño', 'flor', 'cantidad', 'subtotal']
+    list_display = ['diseño', 'producto', 'cantidad', 'subtotal']
+
+@admin.register(Categoria)
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = ['nombre']
+    search_fields = ['nombre']
+
+@admin.register(Producto)
+class ProductoAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'categoria', 'tipo', 'precio', 'stock', 'disponible']
+    list_filter = ['categoria', 'tipo', 'disponible']
+    search_fields = ['nombre', 'descripcion']
+
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'email', 'telefono', 'tipo_cliente']
+    search_fields = ['nombre', 'email']

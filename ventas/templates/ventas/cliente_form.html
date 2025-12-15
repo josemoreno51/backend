@@ -19,39 +19,74 @@
     <form method="post" class="space-y-4">
         {% csrf_token %}
         
+        <!-- Nombre -->
         <div>
             <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre completo</label>
-            <input type="text" id="nombre" name="nombre" value="{{ cliente.nombre|default:'' }}" 
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            <input type="text" id="nombre" name="nombre"
+                   value="{{ cliente.nombre|default:'' }}"
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+                          focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                    required>
         </div>
 
+        <!-- Email -->
         <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" id="email" name="email" value="{{ cliente.email|default:'' }}"
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            <label for="email" class="block text-sm font-medium text-gray-700">Correo electrónico</label>
+            <input type="email" id="email" name="email"
+                   value="{{ cliente.email|default:'' }}"
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+                          focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                    required>
         </div>
 
+        <!-- Teléfono -->
         <div>
             <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
-            <input type="text" id="telefono" name="telefono" value="{{ cliente.telefono|default:'' }}"
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            <input type="text" id="telefono" name="telefono"
+                   value="{{ cliente.telefono|default:'' }}"
+                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+                          focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                    required>
         </div>
 
+        <!-- Tipo de cliente -->
+        <div>
+            <label for="tipo_cliente" class="block text-sm font-medium text-gray-700">Tipo de cliente</label>
+            <select id="tipo_cliente" name="tipo_cliente"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+                           focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required>
+                <option value="minorista"
+                    {% if cliente and cliente.tipo_cliente == "minorista" %}selected{% endif %}>
+                    Cliente minorista
+                </option>
+                <option value="corporativo"
+                    {% if cliente and cliente.tipo_cliente == "corporativo" %}selected{% endif %}>
+                    Cliente corporativo
+                </option>
+                <option value="eventos"
+                    {% if cliente and cliente.tipo_cliente == "eventos" %}selected{% endif %}>
+                    Cliente de eventos
+                </option>
+            </select>
+        </div>
+
+        <!-- Dirección -->
         <div>
             <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección</label>
             <textarea id="direccion" name="direccion" rows="3"
-                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+                             focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       required>{{ cliente.direccion|default:'' }}</textarea>
         </div>
 
         <div class="flex justify-end space-x-3 pt-4">
-            <a href="{% url 'clientes_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+            <a href="{% url 'clientes_list' %}"
+               class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                 Cancelar
             </a>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            <button type="submit"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                 {% if cliente %}Actualizar{% else %}Crear{% endif %} Cliente
             </button>
         </div>

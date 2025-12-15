@@ -1,5 +1,5 @@
 
-{% extends \"base.html\" %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class=\"bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto\">
@@ -20,7 +20,7 @@
             <h3 class=\"text-lg font-semibold mb-3\">📋 Información del Diseño</h3>
             <p><strong>Cliente:</strong> {{ diseño.cliente.nombre }}</p>
             <p><strong>Estilo:</strong> <span class=\"bg-pink-100 text-pink-800 px-2 py-1 rounded-full text-sm\">{{ diseño.get_estilo_display }}</span></p>
-            <p><strong>Fecha de creación:</strong> {{ diseño.fecha_creacion|date:\"d/m/Y H:i\" }}</p>
+            <p><strong>Fecha de creación:</strong> {{ diseño.fecha_creacion|date:"d/m/Y H:i" }}</p>
             {% if diseño.notas %}
             <p><strong>Notas:</strong> {{ diseño.notas }}</p>
             {% endif %}
@@ -35,7 +35,7 @@
                 </div>
                 <div class=\"flex justify-between\">
                     <span>Total de Flores:</span>
-                    <span class=\"font-semibold\">${{ total|add:\"-15\" }}</span>
+                    <span class=\"font-semibold\">${{ total|add:"-15" }}</span>
                 </div>
                 <div class=\"flex justify-between border-t pt-2\">
                     <span class=\"font-bold\">Total del Ramo:</span>

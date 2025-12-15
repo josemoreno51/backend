@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import models
-from django.contrib.auth.decorators import login_required  # ✅ AGREGAR ESTA LÍNEA
+from django.contrib.auth.decorators import login_required
 from .models import Cliente, Categoria, Producto, Evento, Venta, DetalleVenta, Flor, DiseñoRamo, DetalleRamo
-
-# ✅ AGREGAR @login_required A TODAS LAS FUNCIONES
 
 @login_required
 def home(request):
@@ -53,7 +51,7 @@ def cliente_create(request):
         email = request.POST['email']
         telefono = request.POST['telefono']
         direccion = request.POST['direccion']
-        tipo_cliente = request.POST['tipo_cliente']
+        tipo_cliente = request.POST.get('tipo_cliente', 'minorista')
         
         try:
             Cliente.objects.create(
@@ -79,7 +77,7 @@ def cliente_edit(request, id):
         cliente.email = request.POST['email']
         cliente.telefono = request.POST['telefono']
         cliente.direccion = request.POST['direccion']
-        cliente.tipo_cliente = request.POST['tipo_cliente']
+        cliente.tipo_cliente = request.POST.get('tipo_cliente', cliente.tipo_cliente)
         
         try:
             cliente.save()
@@ -186,19 +184,19 @@ def producto_create(request):
     if request.method == 'POST':
         nombre = request.POST['nombre']
         descripcion = request.POST['descripcion']
-        categoria_id = request.POST['categoria']
-        tipo = request.POST['tipo']
+        categoria_id = request.POST.get('categoria')
+        #tipo = request.POST['tipo']
         precio = request.POST['precio']
         stock = request.POST['stock']
         disponible = 'disponible' in request.POST
         
         try:
-            categoria = Categoria.objects.get(id=categoria_id)
+            categoria = Categoria.objects.get(pk=categoria_id)
             Producto.objects.create(
                 nombre=nombre,
                 descripcion=descripcion,
                 categoria=categoria,
-                tipo=tipo,
+                #tipo=tipo,
                 precio=precio,
                 stock=stock,
                 disponible=disponible
@@ -290,7 +288,7 @@ def evento_create(request):
             messages.error(request, f'Error al crear evento: {str(e)}')
     
     clientes = Cliente.objects.all()
-    return render(request, 'ventas/evento_form.html', {'clientes': clientes})
+    return render(request, 'ventas/eventos_form.html', {'clientes': clientes})
 
 @login_required
 def evento_edit(request, id):
@@ -349,59 +347,70 @@ def ventas_list(request):
 def venta_create(request):
     if request.method == 'POST':
         cliente_id = request.POST['cliente']
-        evento_id = request.POST.get('evento', '')
-        fecha_entrega = request.POST['fecha_entrega']
-        direccion_entrega = request.POST['direccion_entrega']
-        estado = request.POST['estado']
-        notas = request.POST['notas']
+        evento_id = request.POST.get('evento', '').strip()
+        fecha_entrega = request.POST.get('fecha_entrega') or None
+        direccion_entrega = request.POST.get('direccion_entrega', '').strip()
+        estado = request.POST.get('estado', 'pendiente').strip()  # default seguro
+        notas = request.POST.get('notas', '').strip()
+
         detalles_data = request.POST.getlist('detalles[]')
-        mensajes_data = request.POST.getlist('mensajes[]')
-        
+        mensajes_data = request.POST.getlist('mensajes[]')  # template actual NO lo envía, quedará []
+
         try:
             cliente = Cliente.objects.get(id=cliente_id)
             evento = Evento.objects.get(id=evento_id) if evento_id else None
-            
+
             venta = Venta.objects.create(
                 cliente=cliente,
                 evento=evento,
                 fecha_entrega=fecha_entrega,
-                direccion_entrega=direccion_entrega,
-                estado=estado,
+                # si quedó vacío, NO lo pasamos para que use el default del modelo
+                direccion_entrega=direccion_entrega or 'Misma dirección del cliente',
+                estado=estado or 'pendiente',
                 notas=notas
             )
-            
-            # Procesar detalles de venta
+
             total_venta = 0
+
+            # Template manda [producto, cantidad, precio] repetido
             for i in range(0, len(detalles_data), 3):
-                if i + 2 < len(detalles_data):
-                    producto_id = detalles_data[i]
-                    cantidad = detalles_data[i + 1]
-                    precio_unitario = detalles_data[i + 2]
-                    mensaje_tarjeta = mensajes_data[i // 3] if i // 3 < len(mensajes_data) else ''
-                    
-                    if producto_id and cantidad and precio_unitario:
-                        producto = Producto.objects.get(id=producto_id)
-                        detalle = DetalleVenta.objects.create(
-                            venta=venta,
-                            producto=producto,
-                            cantidad=int(cantidad),
-                            precio_unitario=float(precio_unitario),
-                            mensaje_tarjeta=mensaje_tarjeta
-                        )
-                        total_venta += detalle.subtotal()
-            
+                if i + 2 >= len(detalles_data):
+                    continue
+
+                producto_id = detalles_data[i]
+                cantidad = detalles_data[i + 1]
+                precio_unitario = detalles_data[i + 2]
+
+                mensaje_tarjeta = mensajes_data[i // 3] if (i // 3) < len(mensajes_data) else ''
+
+                if not (producto_id and cantidad and precio_unitario):
+                    continue
+
+                producto = Producto.objects.get(id=producto_id)
+
+                detalle = DetalleVenta.objects.create(
+                    venta=venta,
+                    producto=producto,
+                    cantidad=int(cantidad),
+                    precio_unitario=float(precio_unitario),
+                    mensaje_tarjeta=mensaje_tarjeta
+                )
+
+                total_venta += detalle.subtotal()
+
             venta.total = total_venta
             venta.save()
-            
+
             messages.success(request, 'Venta creada exitosamente!')
             return redirect('ventas_list')
+
         except Exception as e:
             messages.error(request, f'Error al crear venta: {str(e)}')
-    
+
     clientes = Cliente.objects.all()
     eventos = Evento.objects.all()
     productos = Producto.objects.filter(disponible=True)
-    
+
     return render(request, 'ventas/venta_form.html', {
         'clientes': clientes,
         'eventos': eventos,
@@ -527,8 +536,8 @@ def diseno_ramo_create(request):
         nombre = request.POST['nombre']
         cliente_id = request.POST['cliente']
         estilo = request.POST['estilo']
-        precio_base = request.POST.get('precio_base', 15.00)
-        notas = request.POST['notas']
+        precio_base = request.POST.get('precio_base') or 0
+        notas = request.POST.get('notas', '')
         
         try:
             cliente = Cliente.objects.get(id=cliente_id)
@@ -536,7 +545,7 @@ def diseno_ramo_create(request):
                 nombre=nombre,
                 cliente=cliente,
                 estilo=estilo,
-                precio_base=precio_base,
+                precio_base=float(precio_base),
                 notas=notas
             )
             
@@ -546,10 +555,10 @@ def diseno_ramo_create(request):
             
             for i in range(len(flores_data)):
                 if flores_data[i] and cantidades_data[i]:
-                    flor = Flor.objects.get(id=flores_data[i])
+                    producto = Producto.objects.get(id=flores_data[i])
                     DetalleRamo.objects.create(
                         diseño=diseño,
-                        flor=flor,
+                        producto=producto,
                         cantidad=int(cantidades_data[i])
                     )
             
@@ -559,7 +568,10 @@ def diseno_ramo_create(request):
             messages.error(request, f'Error al crear diseño: {str(e)}')
     
     clientes = Cliente.objects.all()
-    flores = Flor.objects.filter(disponible=True)
+    flores = Producto.objects.filter(
+        categoria__nombre__iexact='Flores',
+        disponible=True
+    )
     return render(request, 'ventas/diseno_ramo_form.html', {
         'clientes': clientes,
         'flores': flores
@@ -571,7 +583,7 @@ def diseno_ramo_detail(request, id):
     detalles = diseño.detalles.all()
     total = diseño.calcular_total()
     
-    return render(request, 'ventas/diseno_ramo_detail.html', {
+    return render(request, 'ventas/diseno_ramos_detail.html', {
         'diseño': diseño,
         'detalles': detalles,
         'total': total
@@ -619,4 +631,4 @@ def diseno_ramo_delete(request, id):
             messages.error(request, f'Error al eliminar diseño: {str(e)}')
         return redirect('diseno_ramos_list')
     
-    return render(request, 'ventas/diseno_ramo_confirm_delete.html', {'diseño': diseño})
+    return render(request, 'ventas/diseno_ramo_confirm_deleted.html', {'diseño': diseño})

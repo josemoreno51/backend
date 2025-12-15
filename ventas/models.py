@@ -150,13 +150,14 @@ class DiseñoRamo(models.Model):
 
 class DetalleRamo(models.Model):  # CORREGIDO: DetalleRamo (singular)
     diseño = models.ForeignKey(DiseñoRamo, on_delete=models.CASCADE, related_name='detalles')
-    flor = models.ForeignKey(Flor, on_delete=models.CASCADE)
+    #flor = models.ForeignKey(Flor, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, blank=True)
     cantidad = models.IntegerField(default=1)
     
     def subtotal(self):
-        return self.cantidad * self.flor.precio_unidad
+        return self.cantidad * self.producto.precio_unidad
     
     def __str__(self):
-        return f"{self.cantidad} x {self.flor.nombre}"
+        return f"{self.cantidad} x {self.producto.nombre}"
 
 # ... (otros modelos existentes)

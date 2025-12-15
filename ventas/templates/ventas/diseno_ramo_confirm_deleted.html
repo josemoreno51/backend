@@ -1,5 +1,5 @@
 @"
-{% extends \"base.html\" %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class=\"bg-white p-6 rounded-lg shadow-md max-w-md mx-auto\">
@@ -16,7 +16,7 @@
     <form method=\"post\">
         {% csrf_token %}
         <div class=\"flex justify-end space-x-3\">
-            <a href=\"{% url 'diseno_ramos_list' %}\" class=\"bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded\">
+            <a href="{% url 'diseno_ramos_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                 Cancelar
             </a>
             <button type=\"submit\" class=\"bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded\">
