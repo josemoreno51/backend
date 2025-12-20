@@ -1,4 +1,5 @@
 from django.db import models
+from decimal import Decimal
 
 # PRIMERO: Modelos que no dependen de otros
 class Categoria(models.Model):
@@ -141,21 +142,24 @@ class DiseñoRamo(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     notas = models.TextField(blank=True)
     
+    @property
     def calcular_total(self):
-        total_flores = sum(detalle.subtotal() for detalle in self.detalles.all())
+        total_flores = sum((detalle.subtotal() for detalle in self.detalles.all()),Decimal('0'))
         return self.precio_base + total_flores
     
     def __str__(self):
-        return f"Ramo: {self.nombre} - ${self.calcular_total()}"
+        return f"Ramo: {self.nombre} - ${self.calcular_total}"
 
-class DetalleRamo(models.Model):  # CORREGIDO: DetalleRamo (singular)
+class DetalleRamo(models.Model):
     diseño = models.ForeignKey(DiseñoRamo, on_delete=models.CASCADE, related_name='detalles')
     #flor = models.ForeignKey(Flor, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, blank=True)
     cantidad = models.IntegerField(default=1)
     
     def subtotal(self):
-        return self.cantidad * self.producto.precio_unidad
+        if not self.producto:
+            return Decimal('0')
+        return Decimal(self.cantidad) * self.producto.precio
     
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre}"

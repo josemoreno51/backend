@@ -1,11 +1,10 @@
-
 {% extends "base.html" %}
 
 {% block content %}
 <div class="bg-white p-6 rounded-lg shadow-md">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800">💰 Gestión de Ventas</h2>
-        <a href="{% url 'venta_create' %}" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+        <a href="{% url 'ventas:venta_create' %}" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
             ＋ Nueva Venta
         </a>
     </div>
@@ -49,10 +48,10 @@
                     </td>
                     <td class="py-3 px-6 text-center">
                         <div class="flex item-center justify-center space-x-2">
-                            <a href="{% url 'venta_detail' venta.id %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs">
+                            <a href="{% url 'ventas:venta_detail' venta.id %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs">
                                 Ver
                             </a>
-                            <a href="{% url 'venta_delete' venta.id %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">
+                            <a href="{% url 'ventas:venta_delete' venta.id %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">
                                 Eliminar
                             </a>
                         </div>
@@ -65,7 +64,7 @@
     {% else %}
     <div class="text-center py-8">
         <p class="text-gray-500 text-lg">No hay ventas registradas.</p>
-        <a href="{% url 'venta_create' %}" class="inline-block mt-4 bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+        <a href="{% url 'ventas:venta_create' %}" class="inline-block mt-4 bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
             Registrar primera venta
         </a>
     </div>

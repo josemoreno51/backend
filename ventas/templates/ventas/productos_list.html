@@ -5,7 +5,7 @@
 <div class="bg-white p-6 rounded-lg shadow-md">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800">📦 Gestión de Productos</h2>
-        <a href="{% url 'producto_create' %}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+        <a href="{% url 'ventas:producto_create' %}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
             ＋ Nuevo Producto
         </a>
     </div>
@@ -55,10 +55,10 @@
                     </td>
                     <td class="py-3 px-6 text-center">
                         <div class="flex item-center justify-center space-x-2">
-                            <a href="{% url 'producto_edit' producto.id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs">
+                            <a href="{% url 'ventas:producto_edit' producto.id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs">
                                 Editar
                             </a>
-                            <a href="{% url 'producto_delete' producto.id %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">
+                            <a href="{% url 'ventas:producto_delete' producto.id %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">
                                 Eliminar
                             </a>
                         </div>
@@ -71,7 +71,7 @@
     {% else %}
     <div class="text-center py-8">
         <p class="text-gray-500 text-lg">No hay productos registrados.</p>
-        <a href="{% url 'producto_create' %}" class="inline-block mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+        <a href="{% url 'ventas:producto_create' %}" class="inline-block mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
             Registrar primer producto
         </a>
     </div>

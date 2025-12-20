@@ -10,7 +10,7 @@ from .forms import CustomUserCreationForm
 def custom_login(request):
     """Página de login - primera página que ven los usuarios"""
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        return redirect('ventas:home')
     
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -20,7 +20,7 @@ def custom_login(request):
         if user is not None:
             login(request, user)
             messages.success(request, f'¡Bienvenido/a {username}!')
-            return redirect('dashboard')
+            return redirect('ventas:home')
         else:
             messages.error(request, 'Usuario o contraseña incorrectos')
     

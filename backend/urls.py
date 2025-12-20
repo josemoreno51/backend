@@ -22,10 +22,7 @@ from . import views  # Importar desde backend
 urlpatterns = [
     # Página principal - Login
     path('', views.custom_login, name='login'),
-    
-    # Dashboard después del login
-    path('dashboard/', views.dashboard, name='dashboard'),
-    
+        
     # Logout
     path('logout/', views.custom_logout, name='logout'),
     

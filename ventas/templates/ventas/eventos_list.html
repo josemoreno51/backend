@@ -5,7 +5,7 @@
 <div class="bg-white p-6 rounded-lg shadow-md">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-gray-800">🎉 Gestión de Eventos</h2>
-        <a href="{% url 'evento_create' %}" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
+        <a href="{% url 'ventas:evento_create' %}" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
             ＋ Nuevo Evento
         </a>
     </div>
@@ -14,25 +14,25 @@
     <div class="mb-6 bg-gray-50 p-4 rounded-lg">
         <h3 class="text-lg font-semibold mb-3">Filtrar por tipo de evento:</h3>
         <div class="flex flex-wrap gap-2">
-            <a href="{% url 'eventos_list' %}" class="{% if not tipo_filtro %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
+            <a href="{% url 'ventas:eventos_list' %}" class="{% if not tipo_filtro %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
                 Todos
             </a>
-            <a href="{% url 'eventos_list' %}?tipo=bodas" class="{% if tipo_filtro == 'bodas' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
+            <a href="{% url 'ventas:eventos_list' %}?tipo=bodas" class="{% if tipo_filtro == 'bodas' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
                 Bodas
             </a>
-            <a href="{% url 'eventos_list' %}?tipo=cumpleanos" class="{% if tipo_filtro == 'cumpleanos' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
+            <a href="{% url 'ventas:eventos_list' %}?tipo=cumpleanos" class="{% if tipo_filtro == 'cumpleanos' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
                 Cumpleaños
             </a>
-            <a href="{% url 'eventos_list' %}?tipo=aniversario" class="{% if tipo_filtro == 'aniversario' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
+            <a href="{% url 'ventas:eventos_list' %}?tipo=aniversario" class="{% if tipo_filtro == 'aniversario' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
                 Aniversario
             </a>
-            <a href="{% url 'eventos_list' %}?tipo=corporativo" class="{% if tipo_filtro == 'corporativo' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
+            <a href="{% url 'ventas:eventos_list' %}?tipo=corporativo" class="{% if tipo_filtro == 'corporativo' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
                 Corporativo
             </a>
-            <a href="{% url 'eventos_list' %}?tipo=san_valentin" class="{% if tipo_filtro == 'san_valentin' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
+            <a href="{% url 'ventas:eventos_list' %}?tipo=san_valentin" class="{% if tipo_filtro == 'san_valentin' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
                 San Valentín
             </a>
-            <a href="{% url 'eventos_list' %}?tipo=dia_madre" class="{% if tipo_filtro == 'dia_madre' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
+            <a href="{% url 'ventas:eventos_list' %}?tipo=dia_madre" class="{% if tipo_filtro == 'dia_madre' %}bg-green-600 text-white{% else %}bg-gray-200{% endif %} px-3 py-1 rounded text-sm">
                 Día de la Madre
             </a>
         </div>
@@ -89,10 +89,10 @@
                     </td>
                     <td class="py-3 px-6 text-center">
                         <div class="flex item-center justify-center space-x-2">
-                            <a href="{% url 'evento_edit' evento.id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs">
+                            <a href="{% url 'ventas:evento_edit' evento.id %}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs">
                                 Editar
                             </a>
-                            <a href="{% url 'evento_delete' evento.id %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">
+                            <a href="{% url 'ventas:evento_delete' evento.id %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs">
                                 Eliminar
                             </a>
                         </div>
@@ -105,7 +105,7 @@
     {% else %}
     <div class="text-center py-8">
         <p class="text-gray-500 text-lg">No hay eventos registrados.</p>
-        <a href="{% url 'evento_create' %}" class="inline-block mt-4 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
+        <a href="{% url 'ventas:evento_create' %}" class="inline-block mt-4 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded">
             Registrar primer evento
         </a>
     </div>

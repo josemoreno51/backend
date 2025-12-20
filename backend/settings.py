@@ -134,6 +134,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ========== CONFIGURACIÓN DE LOGIN ==========
-LOGIN_REDIRECT_URL = '/dashboard/'  # ✅ Después del login va al dashboard
+LOGIN_REDIRECT_URL = 'ventas:home'  # ✅ Después del login va al home
 LOGOUT_REDIRECT_URL = '/'  # ✅ Después del logout va al login
 LOGIN_URL = '/'  # ✅ La página de login es la raíz

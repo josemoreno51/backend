@@ -1,11 +1,58 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db import models
+from django.db import models, transaction
+from django.db.models import F, Sum, Count
 from django.contrib.auth.decorators import login_required
 from .models import Cliente, Categoria, Producto, Evento, Venta, DetalleVenta, Flor, DiseñoRamo, DetalleRamo
 
 @login_required
 def home(request):
+    # KPIs
+    total_clientes = Cliente.objects.count()
+    total_productos = Producto.objects.count()
+    total_ventas = Venta.objects.count()
+    total_eventos = Evento.objects.count()
+    ventas_pendientes = Venta.objects.filter(estado='pendiente').count()
+
+    # TOP productos más vendidos (por cantidad)
+    top_productos = (
+        DetalleVenta.objects
+        .values('producto__nombre')
+        .annotate(total_vendido=Sum('cantidad'))
+        .order_by('-total_vendido')[:5]
+    )
+
+    labels_productos = [p['producto__nombre'] for p in top_productos]
+    data_productos = [int(p['total_vendido'] or 0) for p in top_productos]
+
+    # TOP clientes con más ventas (por cantidad de ventas)
+    top_clientes = (
+        Venta.objects
+        .values('cliente__nombre')
+        .annotate(total_ventas=Count('id'))
+        .order_by('-total_ventas')[:5]
+    )
+
+    labels_clientes = [c['cliente__nombre'] for c in top_clientes]
+    data_clientes = [int(c['total_ventas'] or 0) for c in top_clientes]
+
+    context = {
+        'total_clientes': total_clientes,
+        'total_productos': total_productos,
+        'total_ventas': total_ventas,
+        'total_eventos': total_eventos,
+        'ventas_pendientes': ventas_pendientes,
+
+        # datos para charts
+        'labels_productos': labels_productos,
+        'data_productos': data_productos,
+        'labels_clientes': labels_clientes,
+        'data_clientes': data_clientes,
+    }
+    return render(request, 'ventas/home.html', context)
+
+
+'''def home(request):
     # Estadísticas para el dashboard de floristería
     total_clientes = Cliente.objects.count()
     total_productos = Producto.objects.count()
@@ -28,7 +75,7 @@ def home(request):
         'ventas_pendientes': ventas_pendientes,
         'productos_por_categoria': productos_por_categoria,
     }
-    return render(request, 'ventas/home.html', context)
+    return render(request, 'ventas/home.html', context)'''
 
 # ========== CRUD CLIENTES ==========
 @login_required
@@ -62,7 +109,7 @@ def cliente_create(request):
                 tipo_cliente=tipo_cliente
             )
             messages.success(request, 'Cliente creado exitosamente!')
-            return redirect('clientes_list')
+            return redirect('ventas:clientes_list')
         except Exception as e:
             messages.error(request, f'Error al crear cliente: {str(e)}')
     
@@ -82,7 +129,7 @@ def cliente_edit(request, id):
         try:
             cliente.save()
             messages.success(request, 'Cliente actualizado exitosamente!')
-            return redirect('clientes_list')
+            return redirect('ventas:clientes_list')
         except Exception as e:
             messages.error(request, f'Error al actualizar cliente: {str(e)}')
     
@@ -98,7 +145,7 @@ def cliente_delete(request, id):
             messages.success(request, 'Cliente eliminado exitosamente!')
         except Exception as e:
             messages.error(request, f'Error al eliminar cliente: {str(e)}')
-        return redirect('clientes_list')
+        return redirect('ventas:clientes_list')
     
     return render(request, 'ventas/cliente_confirm_delete.html', {'cliente': cliente})
 
@@ -120,7 +167,7 @@ def categoria_create(request):
                 descripcion=descripcion
             )
             messages.success(request, 'Categoría creada exitosamente!')
-            return redirect('categorias_list')
+            return redirect('ventas:categorias_list')
         except Exception as e:
             messages.error(request, f'Error al crear categoría: {str(e)}')
     
@@ -137,7 +184,7 @@ def categoria_edit(request, id):
         try:
             categoria.save()
             messages.success(request, 'Categoría actualizada exitosamente!')
-            return redirect('categorias_list')
+            return redirect('ventas:categorias_list')
         except Exception as e:
             messages.error(request, f'Error al actualizar categoría: {str(e)}')
     
@@ -153,7 +200,7 @@ def categoria_delete(request, id):
             messages.success(request, 'Categoría eliminada exitosamente!')
         except Exception as e:
             messages.error(request, f'Error al eliminar categoría: {str(e)}')
-        return redirect('categorias_list')
+        return redirect('ventas:categorias_list')
     
     return render(request, 'ventas/categoria_confirm_delete.html', {'categoria': categoria})
 
@@ -202,7 +249,7 @@ def producto_create(request):
                 disponible=disponible
             )
             messages.success(request, 'Producto creado exitosamente!')
-            return redirect('productos_list')
+            return redirect('ventas:productos_list')
         except Exception as e:
             messages.error(request, f'Error al crear producto: {str(e)}')
     
@@ -217,7 +264,7 @@ def producto_edit(request, id):
         producto.nombre = request.POST['nombre']
         producto.descripcion = request.POST['descripcion']
         producto.categoria_id = request.POST['categoria']
-        producto.tipo = request.POST['tipo']
+        #producto.tipo = request.POST['tipo']
         producto.precio = request.POST['precio']
         producto.stock = request.POST['stock']
         producto.disponible = 'disponible' in request.POST
@@ -225,7 +272,7 @@ def producto_edit(request, id):
         try:
             producto.save()
             messages.success(request, 'Producto actualizado exitosamente!')
-            return redirect('productos_list')
+            return redirect('ventas:productos_list')
         except Exception as e:
             messages.error(request, f'Error al actualizar producto: {str(e)}')
     
@@ -245,7 +292,7 @@ def producto_delete(request, id):
             messages.success(request, 'Producto eliminado exitosamente!')
         except Exception as e:
             messages.error(request, f'Error al eliminar producto: {str(e)}')
-        return redirect('productos_list')
+        return redirect('ventas:productos_list')
     
     return render(request, 'ventas/producto_confirm_delete.html', {'producto': producto})
 
@@ -283,7 +330,7 @@ def evento_create(request):
                 descripcion=descripcion
             )
             messages.success(request, 'Evento creado exitosamente!')
-            return redirect('eventos_list')
+            return redirect('ventas:eventos_list')
         except Exception as e:
             messages.error(request, f'Error al crear evento: {str(e)}')
     
@@ -304,12 +351,12 @@ def evento_edit(request, id):
         try:
             evento.save()
             messages.success(request, 'Evento actualizado exitosamente!')
-            return redirect('eventos_list')
+            return redirect('ventas:eventos_list')
         except Exception as e:
             messages.error(request, f'Error al actualizar evento: {str(e)}')
     
     clientes = Cliente.objects.all()
-    return render(request, 'ventas/evento_form.html', {
+    return render(request, 'ventas/eventos_form.html', {
         'evento': evento,
         'clientes': clientes
     })
@@ -324,9 +371,9 @@ def evento_delete(request, id):
             messages.success(request, 'Evento eliminado exitosamente!')
         except Exception as e:
             messages.error(request, f'Error al eliminar evento: {str(e)}')
-        return redirect('eventos_list')
+        return redirect('ventas:eventos_list')
     
-    return render(request, 'ventas/evento_confirm_delete.html', {'evento': evento})
+    return render(request, 'ventas/eventos_confirm_delete.html', {'evento': evento})
 
 # ========== CRUD VENTAS ==========
 @login_required
@@ -350,59 +397,73 @@ def venta_create(request):
         evento_id = request.POST.get('evento', '').strip()
         fecha_entrega = request.POST.get('fecha_entrega') or None
         direccion_entrega = request.POST.get('direccion_entrega', '').strip()
-        estado = request.POST.get('estado', 'pendiente').strip()  # default seguro
+        estado = request.POST.get('estado', 'pendiente').strip()
         notas = request.POST.get('notas', '').strip()
 
         detalles_data = request.POST.getlist('detalles[]')
-        mensajes_data = request.POST.getlist('mensajes[]')  # template actual NO lo envía, quedará []
+        mensajes_data = request.POST.getlist('mensajes[]')
 
         try:
-            cliente = Cliente.objects.get(id=cliente_id)
-            evento = Evento.objects.get(id=evento_id) if evento_id else None
+            with transaction.atomic():
+                cliente = Cliente.objects.get(id=cliente_id)
+                evento = Evento.objects.get(id=evento_id) if evento_id else None
 
-            venta = Venta.objects.create(
-                cliente=cliente,
-                evento=evento,
-                fecha_entrega=fecha_entrega,
-                # si quedó vacío, NO lo pasamos para que use el default del modelo
-                direccion_entrega=direccion_entrega or 'Misma dirección del cliente',
-                estado=estado or 'pendiente',
-                notas=notas
-            )
-
-            total_venta = 0
-
-            # Template manda [producto, cantidad, precio] repetido
-            for i in range(0, len(detalles_data), 3):
-                if i + 2 >= len(detalles_data):
-                    continue
-
-                producto_id = detalles_data[i]
-                cantidad = detalles_data[i + 1]
-                precio_unitario = detalles_data[i + 2]
-
-                mensaje_tarjeta = mensajes_data[i // 3] if (i // 3) < len(mensajes_data) else ''
-
-                if not (producto_id and cantidad and precio_unitario):
-                    continue
-
-                producto = Producto.objects.get(id=producto_id)
-
-                detalle = DetalleVenta.objects.create(
-                    venta=venta,
-                    producto=producto,
-                    cantidad=int(cantidad),
-                    precio_unitario=float(precio_unitario),
-                    mensaje_tarjeta=mensaje_tarjeta
+                venta = Venta.objects.create(
+                    cliente=cliente,
+                    evento=evento,
+                    fecha_entrega=fecha_entrega,
+                    direccion_entrega=direccion_entrega or 'Misma dirección del cliente',
+                    estado=estado or 'pendiente',
+                    notas=notas
                 )
 
-                total_venta += detalle.subtotal()
+                total_venta = 0
 
-            venta.total = total_venta
-            venta.save()
+                # Template manda [producto, cantidad, precio] repetido
+                for i in range(0, len(detalles_data), 3):
+                    if i + 2 >= len(detalles_data):
+                        continue
+
+                    producto_id = detalles_data[i]
+                    cantidad_str = detalles_data[i + 1]
+                    precio_unitario_str = detalles_data[i + 2]
+
+                    if not (producto_id and cantidad_str and precio_unitario_str):
+                        continue
+
+                    cantidad = int(cantidad_str)
+                    precio_unitario = float(precio_unitario_str)
+
+                    mensaje_tarjeta = mensajes_data[i // 3] if (i // 3) < len(mensajes_data) else ''
+
+                    # ✅ Bloquea fila del producto para evitar ventas simultáneas que rompan stock
+                    producto = Producto.objects.select_for_update().get(id=producto_id)
+
+                    # ✅ Validar stock
+                    if producto.stock < cantidad:
+                        raise Exception(
+                            f"Stock insuficiente para {producto.nombre}. "
+                            f"Disponible: {producto.stock}, solicitado: {cantidad}"
+                        )
+
+                    detalle = DetalleVenta.objects.create(
+                        venta=venta,
+                        producto=producto,
+                        cantidad=cantidad,
+                        precio_unitario=precio_unitario,
+                        mensaje_tarjeta=mensaje_tarjeta
+                    )
+
+                    # ✅ Descontar stock de forma atómica (correcto)
+                    Producto.objects.filter(id=producto.id).update(stock=F('stock') - cantidad)
+
+                    total_venta += detalle.subtotal()
+
+                venta.total = total_venta
+                venta.save()
 
             messages.success(request, 'Venta creada exitosamente!')
-            return redirect('ventas_list')
+            return redirect('ventas:ventas_list')
 
         except Exception as e:
             messages.error(request, f'Error al crear venta: {str(e)}')
@@ -441,7 +502,7 @@ def venta_edit(request, id):
         try:
             venta.save()
             messages.success(request, 'Venta actualizada exitosamente!')
-            return redirect('ventas_list')
+            return redirect('ventas:ventas_list')
         except Exception as e:
             messages.error(request, f'Error al actualizar venta: {str(e)}')
     
@@ -463,7 +524,7 @@ def venta_delete(request, id):
             messages.success(request, 'Venta eliminada exitosamente!')
         except Exception as e:
             messages.error(request, f'Error al eliminar venta: {str(e)}')
-        return redirect('ventas_list')
+        return redirect('ventas:ventas_list')
     
     return render(request, 'ventas/venta_confirm_delete.html', {'venta': venta})
 
@@ -563,7 +624,7 @@ def diseno_ramo_create(request):
                     )
             
             messages.success(request, '¡Diseño de ramo creado exitosamente!')
-            return redirect('diseno_ramos_list')
+            return redirect('ventas:diseno_ramos_list')
         except Exception as e:
             messages.error(request, f'Error al crear diseño: {str(e)}')
     
@@ -581,7 +642,7 @@ def diseno_ramo_create(request):
 def diseno_ramo_detail(request, id):
     diseño = get_object_or_404(DiseñoRamo, id=id)
     detalles = diseño.detalles.all()
-    total = diseño.calcular_total()
+    total = diseño.calcular_total
     
     return render(request, 'ventas/diseno_ramos_detail.html', {
         'diseño': diseño,
@@ -598,7 +659,7 @@ def diseno_ramo_convertir_venta(request, id):
             # Crear venta a partir del diseño
             venta = Venta.objects.create(
                 cliente=diseño.cliente,
-                total=diseño.calcular_total(),
+                total=diseño.calcular_total,
                 estado='pendiente',
                 notas=f"Venta generada desde diseño: {diseño.nombre}\n{diseño.notas}"
             )
@@ -607,28 +668,31 @@ def diseno_ramo_convertir_venta(request, id):
             for detalle_ramo in diseño.detalles.all():
                 DetalleVenta.objects.create(
                     venta=venta,
-                    producto=Producto.objects.filter(nombre__icontains=detalle_ramo.flor.nombre).first() or Producto.objects.first(),
+                    producto=Producto.objects.filter(nombre__icontains=detalle_ramo.producto.nombre).first() or Producto.objects.first(),
                     cantidad=detalle_ramo.cantidad,
-                    precio_unitario=detalle_ramo.flor.precio_unidad
+                    precio_unitario=detalle_ramo.producto.precio
+                )
+
+                Producto.objects.filter(id=detalle_ramo.producto.id).update(
+                    stock=F('stock') - detalle_ramo.cantidad
                 )
             
             messages.success(request, '¡Diseño convertido a venta exitosamente!')
-            return redirect('ventas_list')
+            return redirect('ventas:ventas_list')
         except Exception as e:
             messages.error(request, f'Error al convertir diseño: {str(e)}')
     
-    return redirect('diseno_ramo_detail', id=id)
+    return redirect('ventas:diseno_ramo_detail', id=id)
 
 @login_required
 def diseno_ramo_delete(request, id):
     diseño = get_object_or_404(DiseñoRamo, id=id)
-    
     if request.method == 'POST':
         try:
             diseño.delete()
             messages.success(request, 'Diseño eliminado exitosamente!')
         except Exception as e:
             messages.error(request, f'Error al eliminar diseño: {str(e)}')
-        return redirect('diseno_ramos_list')
+        return redirect('ventas:diseno_ramos_list')
     
     return render(request, 'ventas/diseno_ramo_confirm_deleted.html', {'diseño': diseño})
